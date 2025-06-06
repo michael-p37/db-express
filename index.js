@@ -1,13 +1,12 @@
 import express from 'express';
-import path from 'path'
 import expressLayouts from 'express-ejs-layouts'
 import { title } from 'process';
-import cors from 'cors'
-import connection from './database.js'
+
+import db from './database.js'
+
+const app = express();
 
 const port = 8000
-// const express = require("express");
-const app = express();
 
 app.use(express.static('static'))
 
@@ -17,7 +16,7 @@ app.set('views', 'views')
 app.use(expressLayouts)
 app.set('layout', 'layouts/layout')
 
-app.use(cors())
+app.use(express.json())
 
 //pagina principal
 app.get('/', (req, res) => {
@@ -26,15 +25,51 @@ app.get('/', (req, res) => {
     })
 });
 
-app.get('/user',(req,res) => {
-    connection.query('SELECT 1 + 1 AS solution', (err, rows, fields) => {
+//Rutas a las tabalas de la base de datos
+app.get('/categories', (req, res) => {
+    db.query('SELECT * FROM Categories', (err, result) => {
         if (err) {
-            res.status(500).send(err)
-            return
+            console.log('Error al ejecutar la consulta:', err)
+            return res.status(500).send('Error del servidor')
         }
-        console.log('La solucion es: ', rows[0].solution) 
+        res.json(result)
     })
+    res.json(categories)
 })
+app.get('/customers', (req, res) => {
+    const customers = db.prepare('SELECT * FROM Customers').all()
+    res.json(customers)
+})
+app.get('/employees', (req, res) => {
+    const employees = db.prepare('SELECT * FROM Employees').all()
+    res.json(employees)
+})
+app.get('/orderdetails', (req, res) => {
+    const orderdetails = db.prepare('SELECT * FROM OrderDetails').all()
+    res.json(orderdetails)
+})
+app.get('/orders', (req, res) => {
+    const orders = db.prepare('SELECT * FROM Orders').all()
+    res.json(orders)
+})
+app.get('/product', (req, res) => {
+    const products = db.prepare('SELECT * FROM Products').all()
+    res.json(products)
+})
+app.get('/shippers', (req, res) => {
+    const shippers = db.prepare('SELECT * FROM Shippers').all()
+    res.json(shippers)
+})
+app.get('/suppliers', (req, res) => {
+    const suppliers = db.prepare('SELECT * FROM Suppliers').all()
+    res.json(suppliers)
+})
+app.get('/sqlitesequence', (req, res) => {
+    const sqlite_sequence = db.prepare('SELECT * FROM sqlite_sequence').all()
+    res.json(sqlite_sequence)
+})
+
+
 
 app.get('/products', (req, res) => {
   res.status(200).render('products', {

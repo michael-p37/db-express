@@ -1,21 +1,22 @@
-import mysql from "mysql"
+// import Database from 'better-sqlite3'
+// const db = new Database('./northwind-db.db')
 
-const connection = mysql.createConnection({
+// export default db
+import mysql from 'mysql'
+const db = mysql.createConnection({
     host: 'localhost',
-    user: 'michael',
-    password: 'minombre',
-    database: 'my_db'
+    user: '',
+    password: '',
+    database: './northwind-db.db'
 })
-connection.connect((err) => {
+
+db.connect((err) => {
     if (err) {
         console.log('Error de coneccion')
         return
     }
     console.log('Coneccion exitosa')
+
 })
-connection.end()
-
-
-
-
-export default connection;
+db.end()
+export default db
